@@ -8,16 +8,17 @@ class Dispositivo:
 
     def __init__(self, nombre: str, tipo: TipoDispositivo, ubicacion: str):
         # Atributos de identificación
-        self.id = self.crear_id()
-        self.nombre = nombre
-        self.tipo = tipo
-        self.ubicacion = ubicacion
+        self._id = self.crear_id()
+        self._nombre = nombre
+        self._tipo = tipo
+        self._ubicacion = ubicacion
 
         # Atributos de estado y configuración
         self._estado = EstadoDispositivo.INACTIVO
         self._fecha_creacion = datetime.now()
         self._fecha_ultima_conexion = None
-        self.conectado = False
+        self._conectado = False
+        self._historial = []
 
         # Atributos de operación
         self._bateria = 100  # Porcentaje de batería
@@ -87,6 +88,14 @@ class Dispositivo:
     @conectado.setter
     def conectado(self, value):
         self._conectado = value
+
+    @property
+    def historial(self):
+        return self._historial
+    
+    @historial.setter
+    def historial(self, value):
+        self._historial = value
 
     @property
     def bateria(self):
