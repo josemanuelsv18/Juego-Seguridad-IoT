@@ -23,6 +23,86 @@ class Dispositivo:
         self._bateria = 100  # Porcentaje de batería
         self._intervalo_lectura = 60  # Intervalo de lectura en segundos
         
+    # Getters y setters para todos los atributos
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, value):
+        self._id = value
+
+    @property
+    def nombre(self):
+        return self._nombre
+
+    @nombre.setter
+    def nombre(self, value):
+        self._nombre = value
+
+    @property
+    def tipo(self):
+        return self._tipo
+
+    @tipo.setter
+    def tipo(self, value):
+        self._tipo = value
+
+    @property
+    def ubicacion(self):
+        return self._ubicacion
+
+    @ubicacion.setter
+    def ubicacion(self, value):
+        self._ubicacion = value
+
+    @property
+    def estado(self):
+        return self._estado
+
+    @estado.setter
+    def estado(self, value):
+        self._estado = value
+
+    @property
+    def fecha_creacion(self):
+        return self._fecha_creacion
+
+    @fecha_creacion.setter
+    def fecha_creacion(self, value):
+        self._fecha_creacion = value
+
+    @property
+    def fecha_ultima_conexion(self):
+        return self._fecha_ultima_conexion
+
+    @fecha_ultima_conexion.setter
+    def fecha_ultima_conexion(self, value):
+        self._fecha_ultima_conexion = value
+
+    @property
+    def conectado(self):
+        return self._conectado
+
+    @conectado.setter
+    def conectado(self, value):
+        self._conectado = value
+
+    @property
+    def bateria(self):
+        return self._bateria
+
+    @bateria.setter
+    def bateria(self, value):
+        self._bateria = value
+
+    @property
+    def intervalo_lectura(self):
+        return self._intervalo_lectura
+
+    @intervalo_lectura.setter
+    def intervalo_lectura(self, value):
+        self._intervalo_lectura = value
 
 
     @abstractmethod
@@ -72,6 +152,7 @@ class Dispositivo:
             "intervalo_lectura": self._intervalo_lectura
         }
     
+    
     def verificar_salud(self) -> bool:
         salud = True
         if self._bateria < 10:
@@ -83,3 +164,20 @@ class Dispositivo:
         if self._estado == EstadoDispositivo.MANTENIMIENTO:
             salud = False
         return salud
+
+    def _consumir_bateria(self, consumo: int = 1):
+        #Simula el consumo de batería del dispositivo
+        self._bateria -= consumo
+        if self._bateria <= 0:
+            self.desactivar()
+        return self._bateria
+    
+    def _notificar_evento(self, evento: str, datos: dict = None):
+        # Notifica el evento de un dispositivo
+        notificacion = {
+            "dispositivo_id": self.id,
+            "evento": evento,
+            "datos": datos,
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+        return notificacion
