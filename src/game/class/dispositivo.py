@@ -113,7 +113,7 @@ class Dispositivo:
     def intervalo_lectura(self, value):
         self._intervalo_lectura = value
 
-
+        
     @abstractmethod
     def leer_datos(self):
         # Metodo para lectura de datos, debe ser implementado en subclases
@@ -125,6 +125,18 @@ class Dispositivo:
         pass
 
     # Metodos Comunes a todos los dispositivos
+    def accionar(self, accion: int):
+        self._consumir_bateria()
+        if self._bateria > 0:
+            if accion == 0:
+                self.leer_datos()
+            elif accion == 1:
+                self.procesar_datos()
+            else:
+                raise ValueError("Acción no reconocida.")
+        else:
+            raise Exception("Batería agotada. Por favor, recargue el dispositivo.")
+    
     @staticmethod
     def crear_id_lista(id_lista: list) -> int:
         # Filtrar sólo enteros positivos
@@ -190,3 +202,10 @@ class Dispositivo:
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         }
         return notificacion
+    
+    def _cargar_bateria(self):
+        self._bateria = 100
+        self._estado = EstadoDispositivo.ACTIVO
+        self.conectado = True
+        self._fecha_ultima_conexion = datetime.now()
+        return self._bateria
