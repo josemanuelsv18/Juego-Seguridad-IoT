@@ -55,7 +55,7 @@ class IoTSecurityGame:
         return table
 
     def _ask_user_selection(self, alerts: List[Alert]) -> List[int]:
-        Prompt.ask("\n[cyan]Selecciona los índices (separados por comas) de las alertas que deseas atender.[/]\n")
+       ## Prompt.ask("\n[cyan]Selecciona los índices (separados por comas) de las alertas que deseas atender.[/]\n")
        
         raw = Prompt.ask("[bold]Atender alertas[/]", default="")
         if not raw.strip():

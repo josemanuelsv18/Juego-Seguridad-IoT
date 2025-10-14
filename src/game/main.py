@@ -29,8 +29,8 @@ def mostrar_instrucciones():
 
 def main():
     random.seed()
-    mostrar_banner()
-    mostrar_instrucciones()
+    #mostrar_banner()
+    #mostrar_instrucciones()
     game = IoTSecurityGame()
     game.play()
 
