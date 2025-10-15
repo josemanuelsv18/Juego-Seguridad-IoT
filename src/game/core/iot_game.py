@@ -26,13 +26,13 @@ class IoTSecurityGame:
 
     def _default_devices(self) -> List[Device]:
         return [
-            Device(1, "Camara Principal", TipoDispositivo.CAMARA.value, 0.6),
-            Device(2, "Sensor Puerta", TipoDispositivo.CERRADURA.value, 0.3),
-            Device(3, "Sensor Movimiento Sala", TipoDispositivo.SENSOR_MOVIMIENTO.value, 0.5),
-            Device(4, "Sensor Temperatura", TipoDispositivo.SENSOR_TEMPERATURA.value, 0.2),
-            Device(5, "Router Oficina", TipoDispositivo.ROUTER.value, 0.4),
-            Device(6, "Sensor RFID Entrada", TipoDispositivo.SENSOR_RFID.value, 0.35),
-            Device(7, "Sensor Ruido", TipoDispositivo.SENSOR_RUIDO.value, 0.25)
+            Device(1, "Camara Principal", TipoDispositivo.CAMARA.value, random.random()),
+            Device(2, "Sensor Puerta", TipoDispositivo.CERRADURA.value, random.random()),
+            Device(3, "Sensor Movimiento Sala", TipoDispositivo.SENSOR_MOVIMIENTO.value, random.random()),
+            Device(4, "Sensor Temperatura", TipoDispositivo.SENSOR_TEMPERATURA.value, random.random()),
+            Device(5, "Router Oficina", TipoDispositivo.ROUTER.value, random.random()),
+            Device(6, "Sensor RFID Entrada", TipoDispositivo.SENSOR_RFID.value, random.random()),
+            Device(7, "Sensor Ruido", TipoDispositivo.SENSOR_RUIDO.value, random.random())
         ]
 
     def _render_header(self) -> Panel:
@@ -68,7 +68,7 @@ class IoTSecurityGame:
             if token.isdigit():
                 idx = int(token)
                 if 1 <= idx <= len(alerts):
-                    indices.append(idx - 1)
+                    indices.append(idx)
                 else:
                     console.print(f"[red]Índice fuera de rango ignorado:[/] {token}")
             else:
@@ -76,15 +76,17 @@ class IoTSecurityGame:
         return sorted(set(indices))
 
     def _score_round(self, alerts: List[Alert], attended_indices: List[int]):
-        attended_set = set(attended_indices)
-        for idx, alert in enumerate(alerts):
-            attended = idx in attended_set
-            if alert.is_real and attended:
+        
+        #for alert in alerts: 
+        for idx in attended_indices: 
+            alert = alerts[idx]
+ 
+            if alert.is_real:
                 self.points += 2  # CORREGIDO: era = 2, debe ser += 2
-            elif (not alert.is_real) and attended:
-                self.points -= 1
-            elif alert.is_real and not attended:
+                
+            elif (not alert.is_real):
                 self.points -= 2
+                  
         if self.points < 0:
             self.points = 0
 
@@ -95,7 +97,7 @@ class IoTSecurityGame:
             self.round_no = r
             current_hour = random.randint(0, 23)
             alerts = [d.generate_alert(current_hour) for d in self.devices]
-
+  
             with Live(auto_refresh=False) as live:
                 live.update(self._render_header())
                 table = self._alerts_table(alerts)
