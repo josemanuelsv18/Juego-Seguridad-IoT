@@ -55,9 +55,7 @@ class IoTSecurityGame:
         return table
 
     def _ask_user_selection(self, alerts: List[Alert]) -> List[int]:
-       ## Prompt.ask("\n[cyan]Selecciona los índices (separados por comas) de las alertas que deseas atender.[/]\n")
-        raw = Prompt.ask("[bold]introduzca el o los campos separados por comas: \n" )
-        console.print("\n")
+        raw = Prompt.ask("[bold]Atender alertas[/]", default="")
         if not raw.strip():
             return []
         indices = []
@@ -70,60 +68,70 @@ class IoTSecurityGame:
                 if 1 <= idx <= len(alerts):
                     indices.append(idx)
                 else:
-                    console.print(f"[red]Índice fuera de rango ignorado:[/] {token}")
+                    console.print(f"[red]Índice fuera de rango: {token}. El índice debe estar entre 1 y {len(alerts)}.[/]")
             else:
-                console.print(f"[red]Entrada inválida ignorada:[/] {token}")
+                console.print(f"[red]Entrada inválida: {token}. Asegúrate de ingresar solo números.[/]")
         return sorted(set(indices))
 
     def _score_round(self, alerts: List[Alert], attended_indices: List[int]):
-        
-        #for alert in alerts: 
-        for idx in attended_indices: 
-            alert = alerts[idx]
- 
-            if alert.is_real:
-                self.points += 2  # CORREGIDO: era = 2, debe ser += 2
-                
-            elif (not alert.is_real):
-                self.points -= 2
-                  
+        for idx in attended_indices:
+            try:
+                alert = alerts[idx - 1]  
+                if alert.is_real:
+                    self.points += 2
+                else:
+                    self.points -= 2
+            except IndexError as e: 
+                console.print(f"[red]¡Error! Índice fuera de rango: {idx}. No se encuentra en la lista de alertas.[/]")
+            except Exception as e: 
+                console.print(f"[red]Se ha producido un error inesperado: {e}[/]")
+
         if self.points < 0:
             self.points = 0
 
     def play(self):
         console.clear()
         console.rule("[bold blue]Juego: Seguridad IoT")
+        console.print()
+    
         for r in range(1, self.ROUNDS + 1):
             self.round_no = r
             current_hour = random.randint(0, 23)
             alerts = [d.generate_alert(current_hour) for d in self.devices]
   
-            with Live(auto_refresh=False) as live:
-                live.update(self._render_header())
-                table = self._alerts_table(alerts)
-                live.update(Panel(table, title=f"Alertas - Ronda {r}"), refresh=True)
-                 
-                attended = self._ask_user_selection(alerts)
-                self._score_round(alerts, attended)
+            # Mostrar cabecera y tabla
+            console.print(self._render_header())
+            table = self._alerts_table(alerts)
+            console.print(Panel(table, title=f"Alertas - Ronda {r}"))
+            console.print()
 
-                summary = Table.grid(padding=1) 
-                summary.add_column()
-                summary.add_row(f"Puntos después de la ronda: [bold]{self.points}[/]")
-                summary.add_row(f"Atendiste {len(attended)} alerta(s).")
-                live.update(Panel(summary, title="Resumen de ronda"), refresh=True)
+            # Pedir al usuario que seleccione alertas
+            attended = self._ask_user_selection(alerts)
+            self._score_round(alerts, attended)
 
-            console.print("\n[dim]Presiona Enter para continuar a la siguiente ronda...[/]\n")
+            # Mostrar el resumen de la ronda
+            summary = Table.grid(padding=1)
+            summary.add_column()
+            summary.add_row(f"Puntos después de la ronda: [bold]{self.points}[/]")
+            summary.add_row(f"Atendiste {len(attended)} alerta(s).")
+            console.print(Panel(summary, title="Resumen de ronda"))
+            
+            console.print("\n[dim]Presiona Enter para continuar a la siguiente ronda...[/]")
             input()
+            
+            # Limpiar antes de la siguiente ronda
+            if r < self.ROUNDS:
+                console.clear()
 
-        # CORREGIDO: Panel final movido fuera del loop
+        # Mensaje final
+        console.clear()
         result_message = (
-            "[green]¡Victoria! Has terminado con 15 o más puntos.[/]" 
-            if self.points >= 15 
+            "[green]¡Victoria! Has terminado con 15 o más puntos.[/]"
+            if self.points >= 15
             else "[red]Derrota. Terminaste con menos de 15 puntos.[/]"
         )
         result_panel = Panel.fit(
             f"Puntuación final: [bold]{self.points}[/]\n\n{result_message}",
             title="Fin del Juego"
         )
-        console.clear()
         console.print(result_panel)
