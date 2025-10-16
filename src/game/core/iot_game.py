@@ -3,8 +3,7 @@ from typing import List, Optional
 from datetime import datetime
 from rich.console import Console
 from rich.table import Table
-from rich.panel import Panel
-from rich.live import Live
+from rich.panel import Panel 
 from rich.prompt import Prompt
 from core.device import Device
 from core.alert import Alert 
