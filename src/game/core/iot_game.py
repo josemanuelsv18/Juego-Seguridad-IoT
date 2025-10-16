@@ -56,7 +56,7 @@ class IoTSecurityGame:
 
     def _ask_user_selection(self, alerts: List[Alert]) -> List[int]:
        ## Prompt.ask("\n[cyan]Selecciona los índices (separados por comas) de las alertas que deseas atender.[/]\n")
-       
+        console.input("introduzca el o los campos separados por comas: ")
         raw = Prompt.ask("[bold]Atender alertas[/]", default="")
         if not raw.strip():
             return []
@@ -102,17 +102,17 @@ class IoTSecurityGame:
                 live.update(self._render_header())
                 table = self._alerts_table(alerts)
                 live.update(Panel(table, title=f"Alertas - Ronda {r}"), refresh=True)
-
+                 
                 attended = self._ask_user_selection(alerts)
                 self._score_round(alerts, attended)
 
-                summary = Table.grid(padding=1)
+                summary = Table.grid(padding=1) 
                 summary.add_column()
                 summary.add_row(f"Puntos después de la ronda: [bold]{self.points}[/]")
                 summary.add_row(f"Atendiste {len(attended)} alerta(s).")
                 live.update(Panel(summary, title="Resumen de ronda"), refresh=True)
 
-            console.print("\n[dim]Presiona Enter para continuar a la siguiente ronda...[/]")
+            console.print("\n[dim]Presiona Enter para continuar a la siguiente ronda...[/]\n")
             input()
 
         # CORREGIDO: Panel final movido fuera del loop
