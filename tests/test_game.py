@@ -23,7 +23,7 @@ class TestIoTSecurityGame(unittest.TestCase):
 
     def test_score_round_real_alert_attended(self):
         self.game._score_round([self.alert], [0])  # Attending the alert
-        self.assertEqual(self.game.points, IoTSecurityGame.START_POINTS  2)
+        self.assertEqual(self.game.points, IoTSecurityGame.START_POINTS , 2)
 
     def test_score_round_false_alert_attended(self):
         false_alert = Alert(device=self.device, is_real=False, message="Falso positivo", severity="Baja", timestamp=datetime.now())
